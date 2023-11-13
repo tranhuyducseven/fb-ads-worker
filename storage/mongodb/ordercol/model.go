@@ -22,11 +22,27 @@ type USPSTracking struct {
 	TrackingNumber string `json:"tracking_number,omitempty" bson:"tracking_number,omitempty"`
 }
 
+type OrderJourney struct {
+	TraceDate    string  `json:"traceDate"`
+	StatusText   string  `json:"statusText"`
+	StatusDetail string  `json:"statusDetail"`
+	PostmanName  string  `json:"postmanName"`
+	PostmanTel   string  `json:"postmanTel"`
+	Lon          float64 `json:"lon"`
+	Lat          float64 `json:"lat"`
+}
 type Order struct {
 	mongodb.DefaultModel `json:",inline" bson:",inline,omitnested"`
 	CreatedAt            time.Time `json:"created_at" bson:"created_at,omitempty" `
 	UpdatedAt            time.Time `json:"updated_at" bson:"updated_at,omitempty" `
 
+	TraceDate    string  `json:"traceDate"`
+	StatusText   string  `json:"statusText"`
+	StatusDetail string  `json:"statusDetail"`
+	PostmanName  string  `json:"postmanName"`
+	PostmanTel   string  `json:"postmanTel"`
+	Lon          float64 `json:"lon"`
+	Lat          float64 `json:"lat"`
 	// user information
 	FirstName string `json:"first_name,omitempty" bson:"first_name,omitempty"`
 	LastName  string `json:"last_name,omitempty" bson:"last_name,omitempty"`
@@ -73,22 +89,23 @@ type Order struct {
 	PaymentDate     time.Time `json:"payment_date" bson:"payment_date,omitempty"`
 
 	// shipping
-	ShippingFee        float64 `json:"shipping_fee,omitempty" bson:"shipping_fee"`
-	ShippingId         string  `json:"shipping_id,omitempty" bson:"shipping_id,omitempty"`
-	DeliveryDate       string  `json:"delivery_date" bson:"delivery_date"`
-	CarrierId          int64   `json:"carrier_id" bson:"carrier_id"`
-	CarrierName        string  `json:"carrier_name" bson:"carrier_name"`
-	ServiceId          string  `json:"service_id" bson:"service_id"`
-	ServiceName        string  `json:"service_name" bson:"service_name"`
-	CarrierCode        string  `json:"carrier_code" bson:"carrier_code"`
-	CodFee             float64 `json:"cod_fee" bson:"cod_fee"`
-	CustomerShipFee    float64 `json:"customer_ship_fee" bson:"customer_ship_fee"`
-	ReturnFee          float64 `json:"return_fee" bson:"return_fee"`
-	OverWeightShipFee  float64 `json:"over_weight_ship_fee" bson:"over_weight_ship_fee"`
-	DeclaredFee        float64 `json:"declared_fee" bson:"declared_fee"`
-	Description        string  `json:"description" bson:"description"`
-	PrivateDescription string  `json:"private_description" bson:"private_description"`
-	SendCarrierDate    string  `json:"send_carrier_date" bson:"send_carrier_date"`
+	ShippingFee        float64        `json:"shipping_fee,omitempty" bson:"shipping_fee"`
+	ShippingId         string         `json:"shipping_id,omitempty" bson:"shipping_id,omitempty"`
+	DeliveryDate       string         `json:"delivery_date" bson:"delivery_date"`
+	CarrierId          int64          `json:"carrier_id" bson:"carrier_id"`
+	CarrierName        string         `json:"carrier_name" bson:"carrier_name"`
+	ServiceId          string         `json:"service_id" bson:"service_id"`
+	ServiceName        string         `json:"service_name" bson:"service_name"`
+	CarrierCode        string         `json:"carrier_code" bson:"carrier_code"`
+	CodFee             float64        `json:"cod_fee" bson:"cod_fee"`
+	CustomerShipFee    float64        `json:"customer_ship_fee" bson:"customer_ship_fee"`
+	ReturnFee          float64        `json:"return_fee" bson:"return_fee"`
+	OverWeightShipFee  float64        `json:"over_weight_ship_fee" bson:"over_weight_ship_fee"`
+	DeclaredFee        float64        `json:"declared_fee" bson:"declared_fee"`
+	Description        string         `json:"description" bson:"description"`
+	PrivateDescription string         `json:"private_description" bson:"private_description"`
+	SendCarrierDate    string         `json:"send_carrier_date" bson:"send_carrier_date"`
+	Journey            []OrderJourney `json:"journey" bson:"journey"`
 
 	// shipping - usps
 	USPSTracking         USPSTracking `json:"usps_tracking,omitempty" bson:"usps_tracking,omitempty"`

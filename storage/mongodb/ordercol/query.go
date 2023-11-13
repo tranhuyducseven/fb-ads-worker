@@ -71,6 +71,37 @@ func FindAllEmptyVnPostID(ctx context.Context) ([]*Order, error) {
 	filter := bson.D{}
 
 	filter = bsonutil.BsonAdd(filter, "vn_post_id", "")
+	filter = bsonutil.BsonAdd(filter, "carrier_id", 12)
+	filter = bsonutil.BsonNotIn(filter, "depot_id", []int{
+		138773, // thai
+		143753, // us
+	})
+
+	var orders []*Order
+	cursor, err := coll.Find(ctx, filter, option)
+	if err != nil {
+		return nil, err
+	} else {
+		if err = cursor.All(ctx, &orders); err != nil {
+			return nil, err
+		}
+	}
+
+	return orders, nil
+}
+
+func FindAllOrderHaveVnPostID(ctx context.Context) ([]*Order, error) {
+	coll := mongodb.CollRead(os.Getenv("MONGODB_DATABASE"), &Order{})
+
+	option := new(options.FindOptions)
+	option.SetSort(bson.D{{Key: "created_at", Value: -1}})
+
+	filter := bson.D{}
+
+	filter = bsonutil.BsonNotEqual(filter, "vn_post_id", "")
+	filter = bsonutil.BsonNotIn(filter, "status", []string{
+		"Success",
+	})
 
 	var orders []*Order
 	cursor, err := coll.Find(ctx, filter, option)

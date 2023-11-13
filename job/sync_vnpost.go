@@ -26,6 +26,7 @@ func SyncVNPost() {
 
 			_, err := ordercol.Update(context.Background(), order)
 			if err != nil {
+				fmt.Println(err)
 				continue
 			}
 
