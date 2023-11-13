@@ -5,6 +5,7 @@ import (
 	"data-pipeline/service/vnpost"
 	"data-pipeline/storage/mongodb/ordercol"
 	"fmt"
+	"time"
 )
 
 func SyncVNPost() {
@@ -15,10 +16,17 @@ func SyncVNPost() {
 	}
 
 	for _, order := range orders {
-		vnPostData, err := vnpost.GetItem(order.OrderID)
-		if err != nil {
-			fmt.Println(err, order.OrderID)
-			continue
+
+		// get vnpost data
+		var vnPostData *vnpost.ItemVNPost
+		for {
+			v, err := vnpost.GetItem(order.OrderID)
+			if err == nil {
+				vnPostData = v
+				break
+			}
+
+			time.Sleep(10 * time.Second)
 		}
 
 		if vnPostData.ItemCode != "" {
