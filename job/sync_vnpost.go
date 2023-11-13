@@ -17,6 +17,7 @@ func SyncVNPost() {
 	for _, order := range orders {
 		vnPostData, err := vnpost.GetItem(order.OrderID)
 		if err != nil {
+			fmt.Println(err, order.OrderID)
 			continue
 		}
 
