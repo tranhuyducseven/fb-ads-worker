@@ -1,16 +1,16 @@
 package main
 
 import (
-	"data-pipeline/service/vnpost"
 	"fmt"
+	"time"
 )
 
 func main() {
 
-	vnPostData, err := vnpost.GetJourney("EH759147566VN")
+	t, err := time.Parse("02/01/2006 15:04:05", "13/11/2023 18:30:57")
 	if err != nil {
-		fmt.Println(err)
+
 	}
 
-	fmt.Println(len(vnPostData.OrderStatusHistoryDtoList))
+	fmt.Println(t.Unix())
 }

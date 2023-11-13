@@ -120,7 +120,6 @@ func SyncVnPostJourney() {
 		return
 	}
 
-	fmt.Println(len(orders))
 	var wg sync.WaitGroup
 
 	for _, order := range orders {
@@ -137,7 +136,7 @@ func SyncVnPostJourney() {
 					break
 				}
 
-				time.Sleep(5 * time.Second)
+				time.Sleep(10 * time.Second)
 			}
 
 			if len(journey.OrderStatusHistoryDtoList) > len(item.Journey) {
@@ -163,10 +162,13 @@ func SyncVnPostJourney() {
 				if err == nil {
 					fmt.Println("update new journey", item.OrderID)
 				}
-
-				fmt.Println(journey.OrderStatusHistoryDtoList[0])
 				// check failed delivery
 				if journey.OrderStatusHistoryDtoList[0].StatusText == "Giao hàng không thành công" {
+					t, err := time.Parse("02/01/2006 15:04:05", journey.OrderStatusHistoryDtoList[0].TraceDate)
+					if err != nil {
+
+					}
+
 					record := larkaction.AddBaseRecordResquest{
 						AppId:   baseAppId,
 						TableId: baseTableId,
@@ -178,7 +180,7 @@ func SyncVnPostJourney() {
 							"customer_phone": item.PhoneNumber,
 							"postman":        journey.OrderStatusHistoryDtoList[0].PostmanName,
 							"note":           journey.OrderStatusHistoryDtoList[0].StatusDetail,
-							"update_time":    time.Now().Unix() * 1000,
+							"update_time":    t.Unix() * 1000,
 						},
 					}
 
@@ -211,6 +213,11 @@ func SyncVnPostJourney() {
 								continue
 							}
 
+							t, err := time.Parse("02/01/2006 15:04:05", journey.OrderStatusHistoryDtoList[0].TraceDate)
+							if err != nil {
+
+							}
+
 							// update record
 							err = larkaction.UpdateBaseRecord(larkaction.UpdateBaseRecordResquest{
 								AppId:    baseAppId,
@@ -219,7 +226,7 @@ func SyncVnPostJourney() {
 								Fields: map[string]interface{}{
 									"order_status": journey.OrderStatusHistoryDtoList[0].StatusText,
 									"note":         journey.OrderStatusHistoryDtoList[0].StatusDetail,
-									"update_time":  time.Now().Unix() * 1000,
+									"update_time":  t.Unix() * 1000,
 								},
 							}, token.AccessToken)
 							if err != nil {
