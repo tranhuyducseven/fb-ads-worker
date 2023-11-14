@@ -9,4 +9,5 @@ type Staff struct {
 	RoleName     string `json:"roleName"`
 	LarkId       string `json:"larkId"`
 	PrivatePhone string `json:"privatePhone"`
+	BaseId       string `json:"baseId"`
 }

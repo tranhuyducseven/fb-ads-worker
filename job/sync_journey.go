@@ -5,9 +5,11 @@ import (
 	larkaction "data-pipeline/service/larkservice/action"
 	"data-pipeline/service/vnpost"
 	"data-pipeline/storage/mongodb/ordercol"
+	"data-pipeline/storage/postgreschema/stafftable"
 	"data-pipeline/storage/postgreschema/tokentable"
 	"fmt"
 	"github.com/ponlv/go-kit/postgresql"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -183,6 +185,18 @@ func SyncVnPostJourney() {
 							"note":           journey.OrderStatusHistoryDtoList[0].StatusDetail,
 							"update_time":    t.Unix() * 1000,
 						},
+					}
+
+					//get staff
+					staff, err := stafftable.GetById(db, strconv.FormatInt(item.CreatedById, 10))
+					if err == nil {
+						record.Fields["staff"] = []map[string]string{
+							{
+								"id": staff.BaseId,
+							},
+						}
+					} else {
+						fmt.Println("get staff error - err", err)
 					}
 
 					err = larkaction.AddBaseRecord(record, token.AccessToken)
