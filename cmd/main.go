@@ -12,5 +12,7 @@ func main() {
 
 	}
 
+	t = t.Add(-7 * time.Hour)
+
 	fmt.Println(t.Unix())
 }

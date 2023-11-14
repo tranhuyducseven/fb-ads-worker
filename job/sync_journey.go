@@ -168,6 +168,7 @@ func SyncVnPostJourney() {
 					if err != nil {
 
 					}
+					t = t.Add(-7 * time.Hour)
 
 					record := larkaction.AddBaseRecordResquest{
 						AppId:   baseAppId,
@@ -217,6 +218,9 @@ func SyncVnPostJourney() {
 							if err != nil {
 
 							}
+
+							// convert to gmt+7
+							t = t.Add(-7 * time.Hour)
 
 							// update record
 							err = larkaction.UpdateBaseRecord(larkaction.UpdateBaseRecordResquest{
