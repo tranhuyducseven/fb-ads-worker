@@ -166,43 +166,104 @@ func SyncVnPostJourney() {
 				}
 				// check failed delivery
 				if journey.OrderStatusHistoryDtoList[0].StatusText == "Giao hàng không thành công" {
-					t, err := time.Parse("02/01/2006 15:04:05", journey.OrderStatusHistoryDtoList[0].TraceDate)
-					if err != nil {
 
+					page_token := ""
+					is_update := false
+					for {
+
+						// get bitable data
+						res, err := larkaction.GetBaseListRecord(larkaction.GetBaseListRecordResquest{
+							AppId:     baseAppId,
+							TableId:   baseTableId,
+							ViewId:    baseViewId,
+							PageToken: page_token,
+						}, token.AccessToken)
+						if err != nil {
+							fmt.Println(err)
+						}
+
+						// for loop all records get from base
+						for _, record := range res.Records.Items {
+							fields := record.Fields.(map[string]interface{})
+
+							if fmt.Sprintf("%v", fields["order_id"]) != item.OrderID {
+								continue
+							}
+
+							t, err := time.Parse("02/01/2006 15:04:05", journey.OrderStatusHistoryDtoList[0].TraceDate)
+							if err != nil {
+
+							}
+
+							// convert to gmt+7
+							t = t.Add(-7 * time.Hour)
+
+							// update record
+							err = larkaction.UpdateBaseRecord(larkaction.UpdateBaseRecordResquest{
+								AppId:    baseAppId,
+								TableId:  baseTableId,
+								RecordId: record.RecordId,
+								Fields: map[string]interface{}{
+									"order_status": journey.OrderStatusHistoryDtoList[0].StatusText,
+									"note":         journey.OrderStatusHistoryDtoList[0].StatusDetail,
+									"update_time":  t.Unix() * 1000,
+								},
+							}, token.AccessToken)
+							if err != nil {
+								fmt.Println("update record error", err)
+								continue
+							}
+							is_update = true
+
+						}
+
+						if res.Records.PageToken == "" || is_update {
+							break
+						} else {
+							page_token = res.Records.PageToken
+						}
 					}
-					t = t.Add(-7 * time.Hour)
 
-					record := larkaction.AddBaseRecordResquest{
-						AppId:   baseAppId,
-						TableId: baseTableId,
-						Fields: map[string]interface{}{
-							"order_id":       item.OrderID,
-							"delivery_code":  item.VNPostID,
-							"order_status":   journey.OrderStatusHistoryDtoList[0].StatusText,
-							"customer_name":  item.FirstName,
-							"customer_phone": item.PhoneNumber,
-							"postman":        journey.OrderStatusHistoryDtoList[0].PostmanName,
-							"note":           journey.OrderStatusHistoryDtoList[0].StatusDetail,
-							"update_time":    t.Unix() * 1000,
-						},
-					}
+					if !is_update {
+						t, err := time.Parse("02/01/2006 15:04:05", journey.OrderStatusHistoryDtoList[0].TraceDate)
+						if err != nil {
 
-					//get staff
-					staff, err := stafftable.GetById(db, strconv.FormatInt(item.CreatedById, 10))
-					if err == nil {
-						record.Fields["staff"] = []map[string]string{
-							{
-								"id": staff.BaseId,
+						}
+						t = t.Add(-7 * time.Hour)
+
+						record := larkaction.AddBaseRecordResquest{
+							AppId:   baseAppId,
+							TableId: baseTableId,
+							Fields: map[string]interface{}{
+								"order_id":       item.OrderID,
+								"delivery_code":  item.VNPostID,
+								"order_status":   journey.OrderStatusHistoryDtoList[0].StatusText,
+								"customer_name":  item.FirstName,
+								"customer_phone": item.PhoneNumber,
+								"postman":        journey.OrderStatusHistoryDtoList[0].PostmanName,
+								"note":           journey.OrderStatusHistoryDtoList[0].StatusDetail,
+								"update_time":    t.Unix() * 1000,
 							},
 						}
-					} else {
-						fmt.Println("get staff error - err", err)
-					}
 
-					err = larkaction.AddBaseRecord(record, token.AccessToken)
-					if err != nil {
-						fmt.Println("add record error", err, item.OrderID)
-						return
+						//get staff
+						staff, err := stafftable.GetById(db, strconv.FormatInt(item.CreatedById, 10))
+						if err == nil {
+							record.Fields["staff"] = []map[string]string{
+								{
+									"id": staff.BaseId,
+								},
+							}
+						} else {
+							fmt.Println("get staff error - err", err)
+						}
+
+						err = larkaction.AddBaseRecord(record, token.AccessToken)
+						if err != nil {
+							fmt.Println("add record error", err, item.OrderID)
+							return
+						}
+
 					}
 				} else {
 					page_token := ""
