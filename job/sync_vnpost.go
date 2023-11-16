@@ -24,7 +24,7 @@ func SyncVNPost() {
 		var vnPostData *vnpost.ItemVNPost
 		for {
 			if retries > 10 {
-				continue
+				break
 			}
 			v, err := vnpost.GetItem(order.OrderID)
 			if err == nil || errors.Is(err, errors.New("cannot find order")) {

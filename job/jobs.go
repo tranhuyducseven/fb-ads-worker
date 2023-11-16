@@ -10,7 +10,7 @@ func RunAllJob() {
 
 	s := gocron.NewScheduler(time.UTC)
 
-	s.Cron("*/5 * * * *").Do(func() {
+	s.Cron("*/2 * * * *").Do(func() {
 		fmt.Println("start sync vnpost data")
 		SyncVNPost()
 	})
