@@ -27,6 +27,7 @@ func SyncVNPost() {
 				break
 			}
 			v, err := vnpost.GetItem(order.OrderID)
+			fmt.Println(err)
 			if err == nil || errors.Is(err, errors.New("cannot find order")) {
 				vnPostData = v
 				break
