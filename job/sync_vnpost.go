@@ -27,9 +27,12 @@ func SyncVNPost() {
 				break
 			}
 
+			fmt.Println("can't find order", order.OrderID)
+
 			time.Sleep(10 * time.Second)
 		}
 
+		fmt.Println("find vnpost data success", vnPostData)
 		if vnPostData.ItemCode != "" {
 			order.VNPostID = vnPostData.ItemCode
 
