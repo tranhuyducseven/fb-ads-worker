@@ -12,6 +12,7 @@ func SyncVNPost() {
 
 	orders, err := ordercol.FindAllEmptyVnPostID(context.Background())
 	if err != nil {
+		fmt.Println(err)
 		return
 	}
 
