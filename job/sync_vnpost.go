@@ -33,7 +33,7 @@ func SyncVNPost() {
 
 			fmt.Println("can't find order", order.OrderID)
 
-			time.Sleep(5 * time.Second)
+			time.Sleep(2 * time.Second)
 			retries += 1
 		}
 
