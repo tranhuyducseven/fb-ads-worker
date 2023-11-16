@@ -27,13 +27,13 @@ func SyncVNPost() {
 				break
 			}
 			v, err := vnpost.GetItem(order.OrderID)
-			fmt.Println(err)
+
 			if err == nil || errors.Is(err, errors.New("cannot find order")) {
 				vnPostData = v
 				break
 			}
 
-			fmt.Println("can't find order", order.OrderID)
+			fmt.Println("can't find order", order.OrderID, err)
 
 			time.Sleep(2 * time.Second)
 			retries += 1
