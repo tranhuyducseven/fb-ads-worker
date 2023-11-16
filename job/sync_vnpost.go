@@ -4,7 +4,6 @@ import (
 	"context"
 	"data-pipeline/service/vnpost"
 	"data-pipeline/storage/mongodb/ordercol"
-	"errors"
 	"fmt"
 	"time"
 )
@@ -27,8 +26,7 @@ func SyncVNPost() {
 				break
 			}
 			v, err := vnpost.GetItem(order.OrderID)
-
-			if err == nil || errors.Is(err, errors.New("cannot find order")) {
+			if err == nil {
 				vnPostData = v
 				break
 			}

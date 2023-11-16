@@ -3,7 +3,6 @@ package vnpost
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -61,6 +60,6 @@ func GetItem(code string) (*ItemVNPost, error) {
 		return data[0], nil
 	}
 
-	return nil, errors.New("cannot find order")
+	return nil, nil
 
 }
