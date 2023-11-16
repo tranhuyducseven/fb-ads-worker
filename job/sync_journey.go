@@ -132,6 +132,7 @@ func SyncVnPostJourney() {
 			var journey *vnpost.Journey
 
 			for {
+
 				j, err := vnpost.GetJourney(item.VNPostID)
 				if err == nil {
 					journey = j

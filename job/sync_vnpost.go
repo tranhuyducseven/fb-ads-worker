@@ -18,9 +18,13 @@ func SyncVNPost() {
 
 	for _, order := range orders {
 
-		// get vnpost data
+		retries := 0
+
 		var vnPostData *vnpost.ItemVNPost
 		for {
+			if retries > 10 {
+				continue
+			}
 			v, err := vnpost.GetItem(order.OrderID)
 			if err == nil {
 				vnPostData = v
@@ -29,7 +33,12 @@ func SyncVNPost() {
 
 			fmt.Println("can't find order", order.OrderID)
 
-			time.Sleep(10 * time.Second)
+			time.Sleep(5 * time.Second)
+			retries += 1
+		}
+
+		if vnPostData == nil {
+			continue
 		}
 
 		fmt.Println("find vnpost data success", vnPostData)
